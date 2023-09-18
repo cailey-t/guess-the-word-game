@@ -8,7 +8,7 @@ const letterInput = document.querySelector(".letter");
 //The empty paragraph where the word in progress will appear.
 const wordInProgress = document.querySelector(".word-in-progress");
 //The paragraph where the remaining guesses will display.
-const remaining = document.querySelector(".remaining");
+const remainingParagraph = document.querySelector(".remaining");
 //The span inside the paragraph where the remaining guesses will display.
 const displayRemainingGuesses = document.querySelector(".remaining span");
 //The empty paragraph where messages will appear when the player guesses a letter.
@@ -18,7 +18,7 @@ const playAgainButton = document.querySelector(".play-again");
 
 let word = "magnolia";
 const guessedLetters = [];
-let remainingGuesses = 8;
+const remainingGuesses = 8;
 
 const getWord = async function () {
     const res = await fetch("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
@@ -27,6 +27,7 @@ const getWord = async function () {
     const randomIndex = Math.floor(Math.random() * wordArray.length);
     word = wordArray[randomIndex].trim();
     placeHolder(word);
+    //console.log(word);
 };
 
 //Symbol as place holders for the chosen word's letters
@@ -43,6 +44,7 @@ const placeHolder = function (word) {
 };
 
 getWord();
+
 
 
 guessButton.addEventListener("click", function (e) {
@@ -142,7 +144,7 @@ const countGuesses = function (guess) {
 
     if (remainingGuesses === 0) {
         message.innerText = `Game Over. There are no more guesses left. The word is ${word}.`;
-        displayRemainingGuesses.innerText = "0 guesses";
+        startOver();
     } else if (remainingGuesses === 1) {
         displayRemainingGuesses.innerText = "1 guess";
     } else {
@@ -154,6 +156,28 @@ const wonGame = function () {
     if (wordInProgress.innerText === word.toUpperCase()) {
         message.classList.add("win");
         message.innerHTML = `<p class="highlight">You guessed correct the word! Congrats!</p>`;
+        startOver();
     }
 };
+
+const startOver = function () {
+    guessButton.classList.add("hide");
+    remainingParagraph.classList.add("hide");
+    guessedLettersElement.classList.add("hide");
+    playAgainButton.classList.remove("hide");
+};
+
+playAgainButton.addEventListener("click", function() {
+    message.classList.remove("win");
+    message.innerText = "";
+    remainingGuesses = 8;
+    guessedLetters = [];
+    displayRemainingGuesses = `${remainingGuesses} guesses`;
+    guessButton.classList.remove("hide");
+    remainingParagraph.classList.remove("hide");
+    guessedLettersElement.classList.remove("hide");
+    playAgainButton.classList.add("hide");
+    getWord();
+});
+
 
